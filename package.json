@@ -1,6 +1,6 @@
 {
   "name": "gracious",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Facilitate gracious application shutdown by allowing asynchronous code to finish",
   "main": "index.js",
   "types": "index.d.ts",
