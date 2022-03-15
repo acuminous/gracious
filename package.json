@@ -46,5 +46,13 @@
   ],
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acuminous/gracious.git"
+  },
+  "bugs": {
+    "url": "https://github.com/acuminous/gracious/issues"
+  },
+  "homepage": "https://github.com/acuminous/gracious#readme"
 }
