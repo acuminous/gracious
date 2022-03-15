@@ -23,7 +23,7 @@ In addition, when sent a SIGINT and SIGTERM events, you must prevent the applica
 ## Example Usage
 
 ```js
-const { globalTaskRegistry: registry } = require('..');
+const { globalTaskRegistry: registry } = require('gracious');
 
 const intervalId = setInterval(async () => {
   // Record the start of a unit of work
@@ -101,6 +101,6 @@ await registry.close({ timeout: 0 });
 Gracious ships with a shared global registry, but you do not have to use it. You can instantiate your own TaskRegistries registry as follows
 
 ```js
-const { TaskRegistry } = require('..');
+const { TaskRegistry } = require('gracious');
 const taskRegistry = new TaskRegistry();
 ```
