@@ -39,10 +39,12 @@
   },
   "keywords": [
     "gracious",
+    "graceful",
     "drain",
     "shutdown",
     "task",
     "register",
+    "manager",
     "promise",
     "typescript"
   ],

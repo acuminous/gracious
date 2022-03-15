@@ -1,6 +1,6 @@
 # Gracious
 
-Gracious is a library for allowing asynchronus tasks to gracefully complete.
+Gracious is a library that faciliates the graceful shutdown of Node.js applications.
 
 [![NPM version](https://img.shields.io/npm/v/gracious.svg?style=flat-square)](https://www.npmjs.com/package/gracious)
 [![NPM downloads](https://img.shields.io/npm/dm/gracious.svg?style=flat-square)](https://www.npmjs.com/package/gracious)
@@ -13,7 +13,12 @@ Gracious is a library for allowing asynchronus tasks to gracefully complete.
 
 ## Why use gracious?
 
-When you deploy a Node.js application, the previous version is usually terminated by sending a SIGINT or SIGTERM signal to the main process. Unless you handle these explicitly the application will stop abruptly, interrupting any inflight work. Even in well designed systems, failing to complete a unit of work, or attempting to perform it twice, is likely to create problems such has confusing log records, but in poorly designed systems this could result in data loss or inconsistency. By delaying shutdown until inflight work is complete, you will minimise these undersireable side effects.
+When you deploy a Node.js application, the previous version is usually terminated by sending a SIGINT or SIGTERM signal to the main process. Unless handled, the application will stop abruptly, interrupting any inflight work. Even in well designed systems, failing to complete a unit of work, or attempting to perform it twice, is likely to create problems such has confusing logs, but in poorly designed systems this could result in data loss or inconsistency. By deferring shutdown until inflight work is complete, you minimise these undersireable side effects. This is where Gracious comes in.
+
+## How does it work?
+
+Gracious provides a TaskRegistry for tracking inflight units of work. Whenever your application starts a new unit of work you must record it in the registry, then clear the entry when the task completes.
+In addition, when sent a SIGINT and SIGTERM events, you must prevent the application starting new units of work, and wait for the registry to close. The registry will only close when all inflight units of work are complete, or after a configurable timeout. The default timeout is 3 seconds.
 
 ## Example Usage
 
@@ -21,12 +26,14 @@ When you deploy a Node.js application, the previous version is usually terminate
 const { globalTaskRegistry: registry } = require('..');
 
 const intervalId = setInterval(async () => {
+  // Record the start of a unit of work
   const token = registry.register('Example');
   try {
     for (let i = 0; i < 10; i++) {
       await performStep(i);
     }
   } finally {
+    // Record that the task has completed
     registry.clear(token);
   }
 }, 2000);
@@ -41,7 +48,8 @@ const intervalId = setInterval(async () => {
 
       console.log(`Waiting for ${registry.count} task(s) to complete`);
 
-      await registry.close({ timeout: 5000 });
+      // Wait for the registry to close
+      await registry.close();
 
       console.log('Done');
 
@@ -62,16 +70,30 @@ function performStep(i) {
   }
 ```
 
-## Advanced Usage
+## Good to know
 
-### Simpler Code
+### Alternative Usage
 
-Wrapping tasks between `register` and `clear` calls can get onerous, and if the `clear` call is bypassed will lead to a memory leak. As an alternative you could consider using the `perform` function
+Top and tailing tasks between `register` and `clear` calls can get onerous, and if the `clear` call is bypassed, will cause a memory leak. As an alternative consider using the `perform` function, i.e.
 
 ```js
-await registry.perform('Example', () => {
-  // code goes here
+await registry.perform('Example', async () => {
+  for (let i = 0; i < 10; i++) {
+    await performStep(i);
+  }
 });
+```
+
+### Configurable Timeous
+
+The default timeout of three seconds can be overriden as follows
+
+```js
+// Timeout after five seconds
+await registry.close({ timeout: 5000 });
+
+// Disable the timeout completely
+await registry.close({ timeout: 0 }};
 ```
 
 ### Multiple Registries

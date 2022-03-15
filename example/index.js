@@ -21,7 +21,7 @@ const intervalId = setInterval(async () => {
 
       console.log(`Waiting for ${registry.count} task(s) to complete`);
 
-      await registry.close({ timeout: 5000 });
+      await registry.close();
 
       console.log('Done');
 
