@@ -84,7 +84,7 @@ await registry.perform('Example', async () => {
 });
 ```
 
-### Configurable Timeous
+### Configurable Timeouts
 
 The default timeout of three seconds can be overriden as follows
 
