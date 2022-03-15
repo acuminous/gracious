@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Facilitate gracious application shutdown by allowing asynchronous code to finish",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "eslint .",
     "lint-staged": "lint-staged",
@@ -30,7 +31,8 @@
   },
   "directories": {
     "lib": "lib",
-    "test": "test"
+    "test": "test",
+    "example": "example"
   },
   "engines": {
     "node": ">=12.0.0"
