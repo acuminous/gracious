@@ -55,20 +55,16 @@ describe('TaskRegistry', () => {
     ok(duration >= 200);
   });
 
-  it('wraps functions for convenience', async () => {
+  it('performs units of work', async () => {
     const registry = new TaskRegistry();
 
-    registry.wrap('t', () => {
+    const result = await registry.perform('t', () => {
       return new Promise((resolve) => {
-        setTimeout(resolve, 300);
+        setTimeout(() => resolve(123), 300);
       });
     });
 
-    const duration = await time(async () => {
-      return registry.close();
-    });
-
-    ok(duration >= 200);
+    eq(result, 123);
   });
 
   it('prevents tasks from being registered after closing', async () => {

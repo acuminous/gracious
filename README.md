@@ -11,35 +11,74 @@ Gracious is a library for allowing asynchronus tasks to gracefully complete.
 [![gracious](https://snyk.io/advisor/npm-package/gracious/badge.svg)](https://snyk.io/advisor/npm-package/gracious)
 [![Discover zUnit](https://img.shields.io/badge/Discover-zUnit-brightgreen)](https://www.npmjs.com/package/zunit)
 
-## TL;DR
+## Why use gracious?
+
+When you deploy a Node.js application, the previous version is usually terminated by sending a SIGINT or SIGTERM signal to the main process. Unless you handle these explicitly the application will stop abruptly, interrupting any inflight work. Even in well designed systems, failing to complete a unit of work, or attempting to perform it twice, is likely to create problems such has confusing log records, but in poorly designed systems this could result in data loss or inconsistency. By delaying shutdown until inflight work is complete, you will minimise these undersireable side effects.
+
+## Example Usage
 
 ```js
-const { GlobalTaskRegistry: registry } = require('gracious');
+const { globalTaskRegistry: registry } = require('..');
 
-['SIGTERM', 'SIGINT'].forEach((signal) => {
-  // Register signal handlers to gracefully shutdown your application
-  process.once(signal, () => {
-    try {
-      // Prevent new async tasks from arriving while you are gracefully shutting down
-      await disconnectQueue();
-
-      // Wait for inflight tasks to complete
-      await registry.close({ timeout: 5000 });
-    } catch (err) {
-      console.error(err);
-    }
-  })
-}
-
-// Register and clear each instance of a task
-function readMessage(message) {
-  // Register the task
-  const token = registry.register('my task');
+const intervalId = setInterval(async () => {
+  const token = registry.register('Example');
   try {
-    // Do some work
+    for (let i = 0; i < 10; i++) {
+      await performStep(i);
+    }
   } finally {
-    // Clear the task
     registry.clear(token);
   }
-}
+}, 2000);
+
+['SIGTERM', 'SIGINT'].forEach((signal) => {
+  process.once(signal, async () => {
+    try {
+      console.log(`Received ${signal}`);
+
+      // Stop accepting new work
+      clearInterval(intervalId);
+
+      console.log(`Waiting for ${registry.count} task(s) to complete`);
+
+      await registry.close({ timeout: 5000 });
+
+      console.log('Done');
+
+      process.exit(0);
+    } catch (err) {
+      console.error(err);
+      process.exit(1);
+    }
+  });
+});
+
+function performStep(i) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Performing step ${i + 1}`);
+      resolve();
+    }, 100);
+  }
+```
+
+## Advanced Usage
+
+### Simpler Code
+
+Wrapping tasks between `register` and `clear` calls can get onerous, and if the `clear` call is bypassed will lead to a memory leak. As an alternative you could consider using the `perform` function
+
+```js
+await registry.perform('Example', () => {
+  // code goes here
+});
+```
+
+### Multiple Registries
+
+Gracious ships with a shared global registry, but you do not have to use it. You can instantiate your own TaskRegistries registry as follows
+
+```js
+const { TaskRegistry } = require('..');
+const taskRegistry = new TaskRegistry();
 ```
