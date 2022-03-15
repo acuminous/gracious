@@ -61,7 +61,7 @@ describe('TaskRegistry', () => {
     registry.wrap('t', () => {
       return new Promise((resolve) => {
         setTimeout(resolve, 200);
-      })
+      });
     });
 
     const duration = await time(async () => {
@@ -69,7 +69,7 @@ describe('TaskRegistry', () => {
     });
 
     ok(duration >= 200);
-  })
+  });
 
   it('prevents tasks from being registered after closing', async () => {
     const registry = new TaskRegistry();
@@ -150,9 +150,9 @@ describe('TaskRegistry', () => {
 
     try {
       await registry.close({ timeout: 100 });
-    } catch(err) {
+    } catch (err) {
       // Timeout expected
-    };
+    }
 
     registry.reset();
 
@@ -161,5 +161,5 @@ describe('TaskRegistry', () => {
     eq(registry.tasks[0].name, 't2');
     registry.clear(token);
     await registry.close();
-  })
+  });
 });

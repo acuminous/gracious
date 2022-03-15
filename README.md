@@ -12,6 +12,7 @@ Gracious is a library for allowing asynchronus tasks to gracefully complete.
 [![Discover zUnit](https://img.shields.io/badge/Discover-zUnit-brightgreen)](https://www.npmjs.com/package/zunit)
 
 ## TL;DR
+
 ```js
 const { GlobalTaskRegistry: registry } = require('gracious');
 
@@ -42,5 +43,3 @@ function readMessage(message) {
   }
 }
 ```
-
-
