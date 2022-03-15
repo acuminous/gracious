@@ -93,7 +93,7 @@ The default timeout of three seconds can be overriden as follows
 await registry.close({ timeout: 5000 });
 
 // Disable the timeout completely
-await registry.close({ timeout: 0 }};
+await registry.close({ timeout: 0 });
 ```
 
 ### Multiple Registries
