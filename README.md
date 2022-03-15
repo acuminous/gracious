@@ -52,7 +52,6 @@ const intervalId = setInterval(async () => {
       await registry.close();
 
       console.log('Done');
-
       process.exit(0);
     } catch (err) {
       console.error(err);
