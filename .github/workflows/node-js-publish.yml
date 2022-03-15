@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: '16.x'
       - run: npm ci
-      - run: npm run prettier --check .
+      - run: npx prettier --check .
       - run: npm test
 
   publish-npm:
