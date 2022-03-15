@@ -31,7 +31,7 @@ describe('TaskRegistry', () => {
 
     setTimeout(() => {
       registry.clear(token);
-    }, 200);
+    }, 300);
 
     const duration = await time(async () => {
       return registry.close();
@@ -46,7 +46,7 @@ describe('TaskRegistry', () => {
 
     setTimeout(() => {
       registry.clear(token);
-    }, 200);
+    }, 300);
 
     const duration = await time(async () => {
       return registry.close();
@@ -60,7 +60,7 @@ describe('TaskRegistry', () => {
 
     registry.wrap('t', () => {
       return new Promise((resolve) => {
-        setTimeout(resolve, 200);
+        setTimeout(resolve, 300);
       });
     });
 
