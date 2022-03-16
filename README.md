@@ -97,7 +97,7 @@ await registry.close({ timeout: 0 });
 
 ### Multiple Registries
 
-Gracious ships with a shared global registry, but you do not have to use it. You can instantiate your own TaskRegistries registry as follows
+Gracious ships with a shared global registry, but you do not have to use it. You can instantiate your own registries as follows
 
 ```js
 const { TaskRegistry } = require('gracious');
