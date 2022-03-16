@@ -29,11 +29,12 @@ const intervalId = setInterval(async () => {
   // Record the start of a unit of work
   const token = registry.register('Example');
   try {
+    // Perform the unit of work
     for (let i = 0; i < 10; i++) {
       await performStep(i);
     }
   } finally {
-    // Record that the task has completed
+    // Record that the unit of work has completed
     registry.clear(token);
   }
 }, 2000);
