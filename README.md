@@ -101,5 +101,5 @@ Gracious ships with a shared global registry, but you do not have to use it. You
 
 ```js
 const { TaskRegistry } = require('gracious');
-const taskRegistry = new TaskRegistry();
+const registry = new TaskRegistry();
 ```
